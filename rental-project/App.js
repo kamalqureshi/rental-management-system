@@ -1,35 +1,27 @@
-import React, { useEffect } from "react";
-import { getDatabase, ref, set, onValue } from "firebase/database";
-import { database } from "./firebaseConfig";
+import React, { useEffect, useState } from "react";
 import RootNavigator from "./navigation/RootNavigator";
+import NetInfo from '@react-native-community/netinfo';
 
 export default function App() {
-  // useEffect(() => {
-  //   // Write data to the Firebase Realtime Database
-  //   const writeData = async () => {
-  //     try {
-  //       await set(ref(database, "test/"), {
-  //         name: "Test User",
-  //         age: 30,
-  //       });
-  //       console.log("Data written to Firebase");
-  //     } catch (error) {
-  //       console.error("Error writing to Firebase:", error);
-  //     }
-  //   };
+  const [isConnected, setIsConnected] = useState(null);
 
-  //   // Read data from the Firebase Realtime Database
-  //   const readData = () => {
-  //     const testRef = ref(database, "test/");
-  //     onValue(testRef, (snapshot) => {
-  //       const data = snapshot.val();
-  //       console.log("Data read from Firebase:", data);
-  //     });
-  //   };
+  useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener(state => {
+      setIsConnected(state.isConnected);
+    });
 
-  //   writeData();
-  //   readData();
-  // }, []);
+    // Cleanup subscription on unmount
+    return () => {
+      unsubscribe();
+    };
+
+  }, [])
+
+  useEffect(() => {
+    if(isConnected) {
+      console.log("Connected to the internet: ", isConnected)
+    }
+  }, [isConnected])
 
   return <RootNavigator />;
 }

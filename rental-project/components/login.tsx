@@ -13,26 +13,28 @@ const LoginScreen = () => {
   const navigation = useNavigation();
 
   const handleLogin = async () => {
-    onValue(LoginRef, (snapshot) => {
-      const loginData = snapshot.val();
-      const dataArray = Object.keys(loginData).map((key) => ({
-        id: key,
-        ...loginData[key],
-      }));
-      const userFound = dataArray.find((data) => {
-        if (data?.type === "user") {
-          return data?.email === email && data?.password === password;
-        }
-        return false;
-      });
+    // onValue(LoginRef, (snapshot) => {
+    //   const loginData = snapshot.val();
+    //   const dataArray = Object.keys(loginData).map((key) => ({
+    //     id: key,
+    //     ...loginData[key],
+    //   }));
+    //   const userFound = dataArray.find((data) => {
+    //     if (data?.type === "user") {
+    //       return data?.email === email && data?.password === password;
+    //     }
+    //     return false;
+    //   });
 
-      userFound
-        ? (navigation.navigate("Home"),
-          setEmail(""),
-          setPassword(""),
-          setIsErrorLogin(false))
-        : setIsErrorLogin(true);
-    });
+    //   userFound
+    //     ? (navigation.navigate("Home"),
+    //       setEmail(""),
+    //       setPassword(""),
+    //       setIsErrorLogin(false))
+    //     : setIsErrorLogin(true);
+    // });
+
+    navigation.navigate("Home")
   };
 
   const handleSignUp = () => {
@@ -70,7 +72,7 @@ const LoginScreen = () => {
         secureTextEntry
       />
       <Button title="Login" onPress={handleLogin} />
-      <br />
+      {/* <br /> */}
       <Button title="Signup" onPress={handleSignUp} />
     </View>
   );

@@ -1,5 +1,16 @@
 import { initializeApp } from "firebase/app";
-import { getDatabase } from "firebase/database";
+import { getDatabase, goOnline, goOffline } from "firebase/database";
+
+// const firebaseConfig = {
+//   apiKey: "AIzaSyABgpCDuSzEw6_Zc6pDUx7sRpmHXuKQr0c",
+//   authDomain: "rental-system-2f6b4.firebaseapp.com",
+//   databaseURL: 'https://rental-system-2f6b4-default-rtdb.firebaseio.com',
+//   projectId: "rental-system-2f6b4",
+//   storageBucket: "rental-system-2f6b4.appspot.com",
+//   messagingSenderId: "862030347364",
+//   appId: "1:862030347364:web:3f93878a76cee8794ff371",
+//   measurementId: "G-08YPXNMHV3"
+// };
 
 const firebaseConfig = {
   apiKey: "AIzaSyApj4HWYhFq-GW3KpWEd_A_bk3EAs6c22Q",
@@ -14,5 +25,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
+goOnline (database)
+database.persistenceEnabled = true;
 
-export { database };
+export { database, goOffline, goOnline };

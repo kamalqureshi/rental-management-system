@@ -3,7 +3,7 @@ import { PageHeader } from "../components/PageHeader";
 import { Card } from "../components/Card";
 import { AddButton } from "../components/AddButton";
 import { ScrollView } from "react-native";
-import { database } from "../firebaseConfig";
+import { database, goOnline } from "../firebaseConfig";
 import { onValue, ref } from "firebase/database";
 
 export default function TenantView() {
@@ -12,6 +12,7 @@ export default function TenantView() {
   const [filteredList, setFilteredList] = useState([]);
 
   useEffect(() => {
+    // goOnline(database);
     onValue(rentalsRef, (snapshot) => {
       const assetsData = snapshot.val();
       setTenantsList(assetsData);

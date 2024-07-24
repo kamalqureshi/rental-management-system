@@ -53,10 +53,21 @@ const AssetForm = () => {
   const [rentalPeriodOpen, setRentalPeriodOpen] = useState(false);
   const [rentalPeriodValue, setRentalPeriodValue] = useState(null);
 
+  const tenantsRef = ref(database);
+  const [tenantsList, setTenantsList] = useState([]);
+  const [filteredList, setFilteredList] = useState([]);
+
+  // Available Tenants Dropdown 
+  const [availableTenantsItems, setAvailableTenantsItems] = useState([]);
+  const [availableTenantsOpen, setAvailableTenantsOpen] = useState(false);
+  const [availableTenantsValue, setAvailableTenantsValue] = useState(null);
+
   const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
 
   const handleSubmit = async () => {
     const assetId = uuidv4();
+    const tenantId = availableTenantsValue
+    const tenant = filteredList?.find(tenant => tenant.id === tenantId)
     try {
       id
         ? await update(ref(database, `asset-${id}`), {
@@ -68,6 +79,12 @@ const AssetForm = () => {
             rentalAmount: rentalAmount,
             rentalPeriod: rentalPeriodValue,
             isActive: isEnabled,
+            tenantId: tenantId,
+            tenantFirstName: tenant?.firstName,
+            tenantLastName: tenant?.lastName,
+            tenantEmailAddress: tenant?.emailAddress,
+            tenantMobile: tenant?.mobileNumber,
+            tenantAddress: tenant?.tenantAddress 
           })
         : await set(ref(database, `asset-${assetId}`), {
             id: assetId,
@@ -79,6 +96,12 @@ const AssetForm = () => {
             rentalAmount: rentalAmount,
             rentalPeriod: rentalPeriodValue,
             isActive: isEnabled,
+            tenantId: tenantId,
+            tenantFirstName: tenant?.firstName,
+            tenantLastName: tenant?.lastName,
+            tenantEmailAddress: tenant?.emailAddress,
+            tenantMobile: tenant?.mobileNumber,
+            tenantAddress: tenant?.tenantAddress,
             type: "Asset",
           });
       console.log("Asset Data written to Firebase");
@@ -94,6 +117,7 @@ const AssetForm = () => {
     setAssetTypeValue(null);
     setStatusValue(null);
     setRentalPeriodValue(null);
+    setAvailableTenantsValue(null)
 
     navigation.navigate("Assets");
   };
@@ -111,7 +135,9 @@ const AssetForm = () => {
           setIsEnabled(data?.isActive),
           setAssetTypeValue(data?.assetType),
           setStatusValue(data?.assetStatus),
-          setRentalPeriodValue(data?.rentalPeriod));
+          setRentalPeriodValue(data?.rentalPeriod),
+          setAvailableTenantsValue(data?.tenantId)
+        );
       });
     } else {
       setAssetName("");
@@ -122,8 +148,44 @@ const AssetForm = () => {
       setAssetTypeValue(null);
       setStatusValue(null);
       setRentalPeriodValue(null);
+      setAvailableTenantsValue(null)
     }
   }, [id]);
+
+  useEffect(() => {
+    onValue(tenantsRef, (snapshot) => {
+      const tenantsData = snapshot.val();
+      setTenantsList(tenantsData);
+    });
+  }, [])
+
+  useEffect(() => {
+    if (tenantsList) {
+      const dataArray = Object.keys(tenantsList).map((key) => ({
+        id: key,
+        ...tenantsList[key],
+      }));
+      setFilteredList(dataArray.filter((data) => data.type === "Tenant"));
+    }
+  }, [tenantsList]);
+
+  useEffect(() => {
+    if(filteredList) {
+      const tenants = filteredList.map((tenant) => ({
+        label: `${tenant?.firstName} ${tenant?.lastName}`,
+        value: tenant?.id
+      }))
+      setAvailableTenantsItems(tenants)
+    }
+  }, [filteredList])
+
+  const isSubmitDisabled = () => {
+    if(statusValue === "Available") {
+      return !(assetName && assetAddress && rentalAmount) 
+    } else if(statusValue === "Rented") {
+      return !(assetName && assetAddress && rentalAmount && availableTenantsValue)
+    } else return true
+  }
 
   return (
     <View style={{ flex: 1 }}>
@@ -213,6 +275,23 @@ const AssetForm = () => {
             arrowStyle={styles.arrowStyle}
           />
 
+          <Text style={styles.label}>Tenant*</Text>
+          <DropDownPicker
+            open={availableTenantsOpen}
+            value={availableTenantsValue}
+            items={availableTenantsItems}
+            setOpen={setAvailableTenantsOpen}
+            setValue={setAvailableTenantsValue}
+            setItems={setAvailableTenantsItems}
+            placeholder="Select a tenant"
+            disabled={statusValue === "Available" || statusValue === null}
+            style={styles.dropdown}
+            containerStyle={styles.dropdownContainer}
+            dropDownStyle={styles.dropdownStyle}
+            labelStyle={styles.labelStyle}
+            arrowStyle={styles.arrowStyle}
+          />
+
           <View
             style={{
               display: "flex",
@@ -233,9 +312,7 @@ const AssetForm = () => {
           <Button
             title="Submit"
             onPress={handleSubmit}
-            disabled={
-              !(assetName && assetAddress && statusValue && rentalAmount)
-            }
+            disabled={isSubmitDisabled()}
           />
         </View>
       </ScrollView>

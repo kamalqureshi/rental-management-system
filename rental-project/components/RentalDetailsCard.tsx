@@ -5,7 +5,7 @@ import {
   shadowGray,
 } from "../constants/colors";
 import { Ionicons } from "@expo/vector-icons";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 
 export function RentalDetailsCard({ data }) {
   return (
@@ -27,7 +27,7 @@ export function RentalDetailsCard({ data }) {
             <Ionicons name="call" size={10} />
             <Text>{` +9231654987`}</Text>
           </View>
-          <TouchableOpacity>
+          {/* <TouchableOpacity>
             <View
               style={[
                 styles.ButtonContainer,
@@ -36,42 +36,35 @@ export function RentalDetailsCard({ data }) {
             >
               <Text style={styles.ButtonText}>Add Expense</Text>
             </View>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
       </View>
 
       <View style={styles.ContainerColumn}>
         <View>
           <Text
-            style={[styles.AmountText, { marginBottom: 5, fontWeight: 500 }]}
+            style={[styles.TenantHeading, { marginBottom: 5, fontWeight: 500 }]}
           >
             * 20% increment/6 months
           </Text>
 
           <View style={styles.AmountContainer}>
-            <Text style={styles.AmountText}>Total Rent: </Text>
-            <Text
-              style={styles.AmountText}
-            >{`Rs ${data?.rentalAmount}.00`}</Text>
+            <Text style={styles.TenantHeading}>Tenant Name: </Text>
+            <Text style={styles.TenantText}>{`${data?.tenantFirstName} ${data?.tenantLastName}`}</Text>
           </View>
 
           <View style={styles.AmountContainer}>
-            <Text style={styles.AmountText}>Paid: </Text>
-            <Text style={styles.AmountText}>Rs 3600.00</Text>
+            <Text style={styles.TenantHeading}>Tenant Email: </Text>
+            <Text style={styles.TenantText}>{data?.tenantEmailAddress}</Text>
           </View>
 
           <View style={styles.AmountContainer}>
-            <Text style={styles.AmountText}>Advance: </Text>
-            <Text style={styles.AmountText}>Rs 500.00</Text>
-          </View>
-
-          <View style={styles.AmountContainer}>
-            <Text style={styles.AmountText}>Due: </Text>
-            <Text style={styles.AmountText}>Rs 0.0</Text>
+            <Text style={styles.TenantHeading}>Tenant Address: </Text>
+            <Text style={styles.TenantText}>{data?.tenantAddress}</Text>
           </View>
         </View>
 
-        <View>
+        {/* <View>
           <TouchableOpacity>
             <View
               style={[styles.ButtonContainer, { backgroundColor: primaryBlue }]}
@@ -79,7 +72,7 @@ export function RentalDetailsCard({ data }) {
               <Text style={styles.ButtonText}>Add Payment</Text>
             </View>
           </TouchableOpacity>
-        </View>
+        </View> */}
       </View>
     </View>
   );
@@ -91,11 +84,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     backgroundColor: primaryWhite,
-    height: 190,
+    height: 160,
     marginHorizontal: 15,
     padding: 10,
     borderRadius: 5,
     marginBottom: 10,
+    marginTop: 5,
     shadowColor: shadowGray,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.6,
@@ -130,8 +124,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 3,
   },
-  AmountText: {
+  TenantHeading: {
     fontSize: 13,
     fontWeight: 400,
   },
+  TenantText: {
+    fontSize: 13,
+    fontWeight: 500,
+  }
 });
