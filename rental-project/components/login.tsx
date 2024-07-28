@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { View, TextInput, Button, StyleSheet, Alert, Text } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { primaryRed } from "../constants/colors";
+import { primaryBlue, primaryRed, primaryWhite } from "../constants/colors";
 import { database } from "../firebaseConfig";
 import { onValue, ref } from "firebase/database";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 const LoginScreen = () => {
   const LoginRef = ref(database);
@@ -13,28 +14,26 @@ const LoginScreen = () => {
   const navigation = useNavigation();
 
   const handleLogin = async () => {
-    // onValue(LoginRef, (snapshot) => {
-    //   const loginData = snapshot.val();
-    //   const dataArray = Object.keys(loginData).map((key) => ({
-    //     id: key,
-    //     ...loginData[key],
-    //   }));
-    //   const userFound = dataArray.find((data) => {
-    //     if (data?.type === "user") {
-    //       return data?.email === email && data?.password === password;
-    //     }
-    //     return false;
-    //   });
+    onValue(LoginRef, (snapshot) => {
+      const loginData = snapshot.val();
+      const dataArray = Object.keys(loginData).map((key) => ({
+        id: key,
+        ...loginData[key],
+      }));
+      const userFound = dataArray.find((data) => {
+        if (data?.type === "user") {
+          return data?.email === email && data?.password === password;
+        }
+        return false;
+      });
 
-    //   userFound
-    //     ? (navigation.navigate("Home"),
-    //       setEmail(""),
-    //       setPassword(""),
-    //       setIsErrorLogin(false))
-    //     : setIsErrorLogin(true);
-    // });
-
-    navigation.navigate("Home")
+      userFound
+        ? (navigation.navigate("Home"),
+          setEmail(""),
+          setPassword(""),
+          setIsErrorLogin(false))
+        : setIsErrorLogin(true);
+    })
   };
 
   const handleSignUp = () => {
@@ -71,9 +70,19 @@ const LoginScreen = () => {
         onChangeText={setPassword}
         secureTextEntry
       />
-      <Button title="Login" onPress={handleLogin} />
-      {/* <br /> */}
-      <Button title="Signup" onPress={handleSignUp} />
+
+      <TouchableOpacity style={styles.buttonContainer} onPress={handleLogin}>
+        <View style={styles.button}>
+          <Text style={styles.buttonText}>Login</Text>
+        </View>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.buttonContainer} onPress={handleSignUp}>
+        <View style={styles.button}>
+          <Text style={styles.buttonText}>Sign Up</Text>
+        </View>
+      </TouchableOpacity>
+      
     </View>
   );
 };
@@ -97,6 +106,23 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 12,
     paddingHorizontal: 8,
+  },
+  buttonContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: primaryBlue,
+    marginBottom: 1
+  },
+  button: {
+    backgroundColor: primaryBlue,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: primaryWhite,
+    fontSize: 16,
   },
 });
 

@@ -5,6 +5,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import { database } from "../firebaseConfig";
 import { onValue, ref, set, update } from "firebase/database";
 import { v4 as uuidv4 } from "uuid";
+import { primaryBlue, primaryWhite } from "../constants/colors";
 
 const SignupScreen = () => {
   const [email, setEmail] = useState("");
@@ -49,7 +50,15 @@ const SignupScreen = () => {
         onChangeText={setPassword}
         secureTextEntry
       />
-      <Button title="Signup" onPress={handleSignUp} />
+      
+      <TouchableOpacity style={styles.buttonContainer}>
+        <View style={styles.button}>
+          <Text style={styles.buttonText}>
+            <Button title="Login" disabled={!(email && password)} onPress={handleSignUp}/>
+          </Text>
+        </View>
+      </TouchableOpacity>
+
       <Text style={styles.LoginText}>
         User already exists.
         <TouchableOpacity onPress={handleLogin}>
@@ -89,6 +98,23 @@ const styles = StyleSheet.create({
     marginTop: 3,
     marginLeft: 5,
     fontWeight: 500,
+  },
+  buttonContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: primaryBlue,
+    marginBottom: 1
+  },
+  button: {
+    backgroundColor: primaryBlue,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: primaryWhite,
+    fontSize: 16,
   },
 });
 

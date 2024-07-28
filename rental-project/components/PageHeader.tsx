@@ -10,12 +10,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignContent: "space-between",
     justifyContent: "space-between",
-    height: 80,
+    height: 100,
     backgroundColor: primaryBlue,
   },
   title: {
     display: "flex",
     alignItems: "center",
+    justifyContent: 'center',
+    marginTop: 55,
     fontSize: 25,
     marginLeft: 15,
   },
@@ -33,7 +35,7 @@ export function PageHeader({ pageTitle }) {
 
       <View style={{ display: "flex", justifyContent: "space-around" }}>
         <TouchableOpacity onPress={navigateBackHandler}>
-          <Ionicons name="log-out-outline" size={40} />
+          <Ionicons name="log-out-outline" size={40} style={{marginTop: 50}} />
         </TouchableOpacity>
       </View>
     </View>

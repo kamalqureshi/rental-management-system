@@ -4,7 +4,7 @@ import { primaryBlue, primaryRed, primaryYellow } from "../constants/colors";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { database } from "../firebaseConfig";
-import { ref, set, remove } from "firebase/database";
+import { ref, remove } from "firebase/database";
 
 export function Card({ isAsset, data }) {
   const navigation = useNavigation();

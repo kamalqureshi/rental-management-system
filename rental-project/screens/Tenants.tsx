@@ -12,7 +12,6 @@ export default function TenantView() {
   const [filteredList, setFilteredList] = useState([]);
 
   useEffect(() => {
-    // goOnline(database);
     onValue(rentalsRef, (snapshot) => {
       const assetsData = snapshot.val();
       setTenantsList(assetsData);

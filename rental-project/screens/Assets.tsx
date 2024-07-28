@@ -1,9 +1,9 @@
-import React, { useEffect, useState, useTransition } from "react";
+import React, { useEffect, useState } from "react";
 import { PageHeader } from "../components/PageHeader";
 import { Card } from "../components/Card";
 import { ScrollView } from "react-native";
 import { AddButton } from "../components/AddButton";
-import { database, goOffline, goOnline } from "../firebaseConfig";
+import { database } from "../firebaseConfig";
 import { onValue, ref } from "firebase/database";
 
 export default function AssetView() {
@@ -12,8 +12,6 @@ export default function AssetView() {
   const [filteredList, setFilteredList] = useState([]);
 
   useEffect(() => {
-    // goOnline(database);
-
     onValue(assetsRef, (snapshot) => {
       const assetsData = snapshot.val();
       setAssetsList(assetsData);

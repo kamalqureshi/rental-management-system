@@ -1,11 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { DetailsBar } from "../components/DetailsBar";
-import { FilterAssets } from "../components/FilterAssets";
 import { PageHeader } from "../components/PageHeader";
 import { RentalDetailsCard } from "../components/RentalDetailsCard";
-import { SearchBar } from "../components/SearchBar";
 import { ScrollView } from "react-native-gesture-handler";
-import { database, goOnline} from "../firebaseConfig";
+import { database } from "../firebaseConfig";
 import { onValue, ref } from "firebase/database";
 
 const RentalView = () => {
@@ -14,7 +11,6 @@ const RentalView = () => {
   const [filteredList, setFilteredList] = useState([]);
 
   useEffect(() => {
-    // goOnline(database);
     onValue(rentalsRef, (snapshot) => {
       const rentalsData = snapshot.val();
       setRentalsList(rentalsData);
@@ -36,9 +32,6 @@ const RentalView = () => {
   return (
     <ScrollView>
       <PageHeader pageTitle="Home" />
-      {/* <DetailsBar /> */}
-      {/* <FilterAssets /> */}
-      {/* <SearchBar /> */}
       {filteredList.map((data) => (
         <RentalDetailsCard data={data} />
       ))}

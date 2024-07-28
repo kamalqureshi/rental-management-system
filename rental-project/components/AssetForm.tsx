@@ -13,7 +13,7 @@ import DropDownPicker from "react-native-dropdown-picker";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { v4 as uuidv4 } from "uuid";
 import { database } from "../firebaseConfig";
-import { getDatabase, ref, set, onValue, update } from "firebase/database";
+import { ref, set, onValue, update } from "firebase/database";
 
 const AssetForm = () => {
   const route = useRoute();

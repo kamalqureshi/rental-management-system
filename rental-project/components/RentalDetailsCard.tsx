@@ -1,90 +1,69 @@
+import React from "react";
+import { ScrollView, View, Text, StyleSheet } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import {
   primaryBlue,
+  primaryRed,
   primaryWhite,
-  primaryYellow,
   shadowGray,
 } from "../constants/colors";
-import { Ionicons } from "@expo/vector-icons";
-import { View, Text, StyleSheet } from "react-native";
 
 export function RentalDetailsCard({ data }) {
   return (
-    <View style={styles.Container}>
-      <View style={styles.ContainerColumn}>
-        <View>
-          <Text style={{ fontSize: 21, fontWeight: 600, marginBottom: 3 }}>
-            {data?.assetName}
-          </Text>
-          <Text
-            style={{ color: primaryBlue, fontWeight: 600 }}
-          >{`Rs ${data?.rentalAmount}`}</Text>
-          <Text style={{ fontWeight: 600 }}>{data?.rentalPeriod}</Text>
-          <Text style={{ fontWeight: 600 }}>01/01/23 - 01/01/24</Text>
+    <ScrollView contentContainerStyle={styles.scrollViewContent}>
+      <View style={styles.container}>
+        <View style={styles.containerColumn}>
+          <View>
+            <Text style={styles.assetName}>{data?.assetName}</Text>
+            <Text style={styles.rentalAmount}>{`Rs ${data?.rentalAmount}`}</Text>
+            <Text style={styles.commonText}>{data?.rentalPeriod}</Text>
+            <Text style={styles.commonText}>01/01/23 - 01/01/24</Text>
+          </View>
+
+          <View style={styles.bottomSection}>
+            <View style={styles.phoneContainer}>
+              <Ionicons name="call" size={10} />
+              <Text>{` +9231654987`}</Text>
+            </View>
+          </View>
         </View>
 
-        <View style={{ marginBottom: 60 }}>
-          <View style={styles.PhoneContainer}>
-            <Ionicons name="call" size={10} />
-            <Text>{` +9231654987`}</Text>
-          </View>
-          {/* <TouchableOpacity>
-            <View
-              style={[
-                styles.ButtonContainer,
-                { backgroundColor: primaryYellow },
-              ]}
-            >
-              <Text style={styles.ButtonText}>Add Expense</Text>
+        <View style={styles.containerColumn}>
+          <View>
+            <Text style={styles.incrementText}>* 20% increment/6 months</Text>
+
+            <View style={styles.amountContainer}>
+              <Text style={styles.tenantHeading}>Tenant Name: </Text>
+              <Text style={styles.tenantText}>
+                {`${data?.tenantFirstName} ${data?.tenantLastName}`}
+              </Text>
             </View>
-          </TouchableOpacity> */}
+
+            <View style={styles.amountContainer}>
+              <Text style={styles.tenantHeading}>Tenant Email: </Text>
+              <Text style={styles.tenantText}>{data?.tenantEmailAddress}</Text>
+            </View>
+
+            <View style={styles.amountContainer}>
+              <Text style={styles.tenantHeading}>Tenant Address: </Text>
+              <Text style={styles.tenantText}>{data?.tenantAddress}</Text>
+            </View>
+          </View>
         </View>
       </View>
-
-      <View style={styles.ContainerColumn}>
-        <View>
-          <Text
-            style={[styles.TenantHeading, { marginBottom: 5, fontWeight: 500 }]}
-          >
-            * 20% increment/6 months
-          </Text>
-
-          <View style={styles.AmountContainer}>
-            <Text style={styles.TenantHeading}>Tenant Name: </Text>
-            <Text style={styles.TenantText}>{`${data?.tenantFirstName} ${data?.tenantLastName}`}</Text>
-          </View>
-
-          <View style={styles.AmountContainer}>
-            <Text style={styles.TenantHeading}>Tenant Email: </Text>
-            <Text style={styles.TenantText}>{data?.tenantEmailAddress}</Text>
-          </View>
-
-          <View style={styles.AmountContainer}>
-            <Text style={styles.TenantHeading}>Tenant Address: </Text>
-            <Text style={styles.TenantText}>{data?.tenantAddress}</Text>
-          </View>
-        </View>
-
-        {/* <View>
-          <TouchableOpacity>
-            <View
-              style={[styles.ButtonContainer, { backgroundColor: primaryBlue }]}
-            >
-              <Text style={styles.ButtonText}>Add Payment</Text>
-            </View>
-          </TouchableOpacity>
-        </View> */}
-      </View>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  Container: {
-    display: "flex",
+  scrollViewContent: {
+    flexGrow: 1,
+    padding: 10,
+  },
+  container: {
     flexDirection: "row",
     justifyContent: "space-between",
     backgroundColor: primaryWhite,
-    height: 160,
     marginHorizontal: 15,
     padding: 10,
     borderRadius: 5,
@@ -96,40 +75,58 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     elevation: 3,
   },
-  ContainerColumn: {
-    display: "flex",
+  containerColumn: {
+    flex: 1,
     flexDirection: "column",
     justifyContent: "space-between",
   },
-  PhoneContainer: {
-    display: "flex",
+  phoneContainer: {
     flexDirection: "row",
     alignItems: "baseline",
     marginBottom: 6,
     marginTop: 15,
   },
-  ButtonContainer: {
+  buttonContainer: {
     padding: 8,
     borderRadius: 8,
     marginBottom: 10,
   },
-  ButtonText: {
-    display: "flex",
+  buttonText: {
     justifyContent: "center",
-    fontWeight: 600,
+    fontWeight: "600",
   },
-  AmountContainer: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
+  amountContainer: {
+    flexDirection: "column", 
+    alignItems: "flex-start", 
     marginBottom: 3,
   },
-  TenantHeading: {
+  tenantHeading: {
     fontSize: 13,
-    fontWeight: 400,
+    fontWeight: "700",
+    color: primaryBlue
   },
-  TenantText: {
+  tenantText: {
     fontSize: 13,
-    fontWeight: 500,
-  }
+    fontWeight: "400",
+  },
+  assetName: {
+    fontSize: 21,
+    fontWeight: "600",
+    marginBottom: 3,
+  },
+  rentalAmount: {
+    color: primaryBlue,
+    fontWeight: "600",
+  },
+  commonText: {
+    fontWeight: "600",
+  },
+  incrementText: {
+    marginBottom: 5,
+    fontWeight: "500",
+    color: primaryRed
+  },
+  bottomSection: {
+    marginBottom: 60,
+  },
 });
