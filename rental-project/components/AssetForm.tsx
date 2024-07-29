@@ -80,11 +80,11 @@ const AssetForm = () => {
             rentalPeriod: rentalPeriodValue,
             isActive: isEnabled,
             tenantId: tenantId,
-            tenantFirstName: tenant?.firstName,
-            tenantLastName: tenant?.lastName,
-            tenantEmailAddress: tenant?.emailAddress,
-            tenantMobile: tenant?.mobileNumber,
-            tenantAddress: tenant?.tenantAddress 
+            tenantFirstName: tenant?.firstName || "",
+            tenantLastName: tenant?.lastName || "",
+            tenantEmailAddress: tenant?.emailAddress || "",
+            tenantMobile: tenant?.mobileNumber || "",
+            tenantAddress: tenant?.tenantAddress || "" 
           })
         : await set(ref(database, `asset-${assetId}`), {
             id: assetId,
@@ -97,11 +97,11 @@ const AssetForm = () => {
             rentalPeriod: rentalPeriodValue,
             isActive: isEnabled,
             tenantId: tenantId,
-            tenantFirstName: tenant?.firstName,
-            tenantLastName: tenant?.lastName,
-            tenantEmailAddress: tenant?.emailAddress,
-            tenantMobile: tenant?.mobileNumber,
-            tenantAddress: tenant?.tenantAddress,
+            tenantFirstName: tenant?.firstName || "",
+            tenantLastName: tenant?.lastName || "",
+            tenantEmailAddress: tenant?.emailAddress || "",
+            tenantMobile: tenant?.mobileNumber || "",
+            tenantAddress: tenant?.tenantAddress || "",
             type: "Asset",
           });
       console.log("Asset Data written to Firebase");

@@ -51,10 +51,10 @@ const SignupScreen = () => {
         secureTextEntry
       />
       
-      <TouchableOpacity style={styles.buttonContainer}>
+      <TouchableOpacity style={styles.buttonContainer} disabled={!(email && password)} onPress={handleSignUp}>
         <View style={styles.button}>
           <Text style={styles.buttonText}>
-            <Button title="Login" disabled={!(email && password)} onPress={handleSignUp}/>
+            Signup
           </Text>
         </View>
       </TouchableOpacity>
