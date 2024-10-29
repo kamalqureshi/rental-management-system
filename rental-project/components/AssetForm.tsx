@@ -7,6 +7,7 @@ import {
   TextInput,
   Button,
   Switch,
+  SafeAreaView,
 } from "react-native";
 import { PageHeader } from "../components/PageHeader";
 import DropDownPicker from "react-native-dropdown-picker";
@@ -14,12 +15,21 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { v4 as uuidv4 } from "uuid";
 import { database } from "../firebaseConfig";
 import { ref, set, onValue, update } from "firebase/database";
+import DateTimePicker from 'react-native-ui-datepicker';
+import dayjs from 'dayjs';
+import { SafeAreaProvider } from "react-native-safe-area-context";
+
+function setDateFormat(date){
+  const dateSplit = date.split('/')
+  return dayjs().date(dateSplit[0]).month(dateSplit[1]-1).year(dateSplit[2])
+}
 
 const AssetForm = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const { id } = route.params || {};
 
+  const [assetId, setAssetId] = useState(id)
   const [assetName, setAssetName] = useState("");
   const [assetAddress, setAssetAddress] = useState("");
   const [assetDesc, setAssetDesc] = useState("");
@@ -31,6 +41,10 @@ const AssetForm = () => {
     { label: "House", value: "House" },
     { label: "Condo", value: "Condo" },
     { label: "Apartment", value: "Apartment" },
+    { label: "Flat", value: "Flat" },
+    { label: "Shop", value: "Shop" },
+    { label: "Hall", value: "Hall" },
+    { label: "Plaza", value: "Plaza" },
   ]);
   const [assetTypeOpen, setAssetTypeOpen] = useState(false);
   const [assetTypeValue, setAssetTypeValue] = useState(null);
@@ -42,6 +56,8 @@ const AssetForm = () => {
   ]);
   const [statusOpen, setStatusOpen] = useState(false);
   const [statusValue, setStatusValue] = useState(null);
+  const [startContract, setStartContract] = useState(dayjs())
+  const [endContract, setEndContract] = useState(dayjs())
 
   //Rental Period Dropdown
   const [rentalPeriodItems, setRentalPeriodItems] = useState([
@@ -79,6 +95,8 @@ const AssetForm = () => {
             rentalAmount: rentalAmount,
             rentalPeriod: rentalPeriodValue,
             isActive: isEnabled,
+            startContract: `${startContract.date()}/${startContract.month()+1}/${startContract.year()}`,
+            endContract: `${endContract.date()}/${endContract.month()+1}/${endContract.year()}`,
             tenantId: tenantId,
             tenantFirstName: tenant?.firstName || "",
             tenantLastName: tenant?.lastName || "",
@@ -96,6 +114,8 @@ const AssetForm = () => {
             rentalAmount: rentalAmount,
             rentalPeriod: rentalPeriodValue,
             isActive: isEnabled,
+            startContract: `${startContract.date()}/${startContract.month()+1}/${startContract.year()}`,
+            endContract: `${endContract.date()}/${endContract.month()+1}/${endContract.year()}`,
             tenantId: tenantId,
             tenantFirstName: tenant?.firstName || "",
             tenantLastName: tenant?.lastName || "",
@@ -117,7 +137,10 @@ const AssetForm = () => {
     setAssetTypeValue(null);
     setStatusValue(null);
     setRentalPeriodValue(null);
-    setAvailableTenantsValue(null)
+    setAvailableTenantsValue(null);
+    setStartContract(dayjs());
+    setEndContract(dayjs());
+    setAssetId(null)
 
     navigation.navigate("Assets");
   };
@@ -136,7 +159,10 @@ const AssetForm = () => {
           setAssetTypeValue(data?.assetType),
           setStatusValue(data?.assetStatus),
           setRentalPeriodValue(data?.rentalPeriod),
-          setAvailableTenantsValue(data?.tenantId)
+          setAvailableTenantsValue(data?.tenantId),
+          setStartContract(setDateFormat(data?.startContract)),
+          setEndContract(setDateFormat(data?.endContract)),
+          setAssetId(id)
         );
       });
     } else {
@@ -148,9 +174,11 @@ const AssetForm = () => {
       setAssetTypeValue(null);
       setStatusValue(null);
       setRentalPeriodValue(null);
-      setAvailableTenantsValue(null)
+      setAvailableTenantsValue(null);
+      setStartContract(dayjs());
+      setEndContract(dayjs());
     }
-  }, [id]);
+  }, [id, assetId]);
 
   useEffect(() => {
     onValue(tenantsRef, (snapshot) => {
@@ -181,16 +209,16 @@ const AssetForm = () => {
 
   const isSubmitDisabled = () => {
     if(statusValue === "Available") {
-      return !(assetName && assetAddress && rentalAmount) 
+      return !(assetName && assetAddress && rentalAmount && startContract && endContract >= startContract) 
     } else if(statusValue === "Rented") {
-      return !(assetName && assetAddress && rentalAmount && availableTenantsValue)
+      return !(assetName && assetAddress && rentalAmount && availableTenantsValue && startContract && endContract >= startContract)
     } else return true
   }
 
   return (
     <View style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-        <PageHeader pageTitle="Add/Update Assets" />
+        <PageHeader pageTitle={`${id ? 'Update Asset' : 'Add Asset'}`} />
 
         <View style={styles.container}>
           <Text style={styles.label}>Type</Text>
@@ -274,6 +302,33 @@ const AssetForm = () => {
             labelStyle={styles.labelStyle}
             arrowStyle={styles.arrowStyle}
           />
+
+          <SafeAreaProvider>
+            <SafeAreaView style={{backfaceVisibility: "visible"}}>
+              <Text style={styles.label}>
+                Contract Start
+              </Text>
+              <DateTimePicker
+                mode="single"
+                date={startContract}
+                onChange={(params) => setStartContract(params.date)}
+              />
+            </SafeAreaView>
+          </SafeAreaProvider>
+
+          <SafeAreaProvider>
+            <SafeAreaView style={{backfaceVisibility: "visible"}}>
+              <Text style={styles.label}>
+                Contract Expiration
+              </Text>
+              <DateTimePicker
+                mode="single"
+                date={endContract}
+                onChange={(params) => setEndContract(params.date)}
+                minDate={startContract}
+              />
+            </SafeAreaView>
+          </SafeAreaProvider>
 
           <Text style={styles.label}>Tenant*</Text>
           <DropDownPicker

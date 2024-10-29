@@ -17,13 +17,13 @@ export function RentalDetailsCard({ data }) {
             <Text style={styles.assetName}>{data?.assetName}</Text>
             <Text style={styles.rentalAmount}>{`Rs ${data?.rentalAmount}`}</Text>
             <Text style={styles.commonText}>{data?.rentalPeriod}</Text>
-            <Text style={styles.commonText}>01/01/23 - 01/01/24</Text>
+            <Text style={styles.commonText}>{`${data?.startContract} - ${data?.endContract}`}</Text>
           </View>
 
           <View style={styles.bottomSection}>
             <View style={styles.phoneContainer}>
               <Ionicons name="call" size={10} />
-              <Text>{` +9231654987`}</Text>
+              <Text>{`(+92) ${data?.tenantMobile}`}</Text>
             </View>
           </View>
         </View>

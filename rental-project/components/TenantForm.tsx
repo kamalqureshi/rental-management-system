@@ -22,6 +22,7 @@ const TenantForm = () => {
 
   const { id } = route.params || {};
 
+  const [tenantId, setTenantId] = useState(id)
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
@@ -32,10 +33,29 @@ const TenantForm = () => {
   const [referenceName, setReferenceName] = useState("");
   const [referenceMobile, setReferenceMobile] = useState("");
   const [referenceAddress, setReferenceAddress] = useState("");
+  const [assetsList, setAssetsList] = useState([]);
+  const [filteredList, setFilteredList] = useState([]);
 
   const toggleSwitch = () => setIsActive((previousState) => !previousState);
   const referenceButtonHandler = () =>
     setIsReference((previousState) => !previousState);
+
+  useEffect(() => {
+    onValue(ref(database), (snapshot) => {
+      const assetsData = snapshot.val();
+      setAssetsList(assetsData);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (assetsList) {
+      const dataArray = Object.keys(assetsList).map((key) => ({
+        id: key,
+        ...assetsList[key],
+      }));
+      setFilteredList(dataArray.filter((data) => data.type === "Asset"));
+    }
+  }, [assetsList]);
 
   const handleSubmit = async () => {
     const tenantId = uuidv4();
@@ -65,6 +85,20 @@ const TenantForm = () => {
             referenceAddress: referenceAddress,
             type: "Tenant",
           });
+
+      const assetToUpdate = filteredList.map(asset => 
+        { if (asset.tenantId === id) return asset }
+      )
+      await assetToUpdate.length && id && assetToUpdate.forEach( asset => 
+        update(ref(database, `asset-${asset.id}`), {
+        tenantFirstName: firstName || "",
+        tenantLastName: lastName || "",
+        tenantEmailAddress: emailAddress || "",
+        tenantMobile: mobileNumber || "",
+        tenantAddress: tenantAddress || ""
+      })
+    )
+
       console.log("Tenant Data written to Firebase");
     } catch (error) {
       console.error("Error writing to Firebase:", error);
@@ -79,6 +113,7 @@ const TenantForm = () => {
     setReferenceName("");
     setReferenceMobile("");
     setReferenceAddress("");
+    setTenantId(null);
 
     navigation.navigate("Tenants");
   };
@@ -93,10 +128,13 @@ const TenantForm = () => {
           setLastName(data?.lastName),
           setMobileNumber(data?.mobileNumber),
           setTenantAddress(data?.tenantAddress),
+          setEmailAddress(data?.emailAddress),
           setIsActive(data?.isActive),
           setReferenceName(data?.referenceName),
           setReferenceMobile(data?.referenceMobile),
-          setReferenceAddress(data?.referenceAddress));
+          setReferenceAddress(data?.referenceAddress),
+          setTenantId(id)
+        );
       });
     } else {
       setFirstName("");
@@ -109,11 +147,11 @@ const TenantForm = () => {
       setReferenceMobile("");
       setReferenceAddress("");
     }
-  }, [id]);
+  }, [id, tenantId]);
 
   return (
     <ScrollView>
-      <PageHeader pageTitle="Add/Update Tenants" />
+      <PageHeader pageTitle={`${id ? 'Update Tenant' : 'Add Tenant'}`} />
 
       <View style={styles.container}>
         <Text style={styles.label}>First Name*</Text>
