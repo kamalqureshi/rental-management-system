@@ -6,6 +6,7 @@ import AssetView from "../screens/Assets";
 import TenantView from "../screens/Tenants";
 import TenantForm from "../components/TenantForm";
 import AssetForm from "../components/AssetForm";
+import ProfileView from "../screens/Profile";
 
 const Tab = createBottomTabNavigator();
 
@@ -67,6 +68,18 @@ export default function TabsNavigator() {
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
               name={focused ? "document-text" : "document-text-outline"}
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Profile"
+        component={ProfileView}
+        options={{
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon
+              name={focused ? "person" : "person-outline"}
               color={color}
             />
           ),
