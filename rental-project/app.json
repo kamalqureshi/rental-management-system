@@ -2,6 +2,11 @@
   "expo": {
     "name": "rental-project",
     "slug": "rental-project",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "extra": {
+      "eas": {
+        "projectId": "0fb8c6de-f3c8-4cf1-939e-3ab24eb6ab70"
+      }
+    }
   }
 }
