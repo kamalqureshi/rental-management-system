@@ -5,6 +5,7 @@ import { primaryBlue, primaryRed, primaryWhite } from "../constants/colors";
 import { database } from "../firebaseConfig";
 import { onValue, ref } from "firebase/database";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LoginScreen = () => {
   const LoginRef = ref(database);
@@ -14,6 +15,7 @@ const LoginScreen = () => {
   const navigation = useNavigation();
 
   const handleLogin = async () => {
+    await AsyncStorage.setItem('@email', email);
     onValue(LoginRef, (snapshot) => {
       const loginData = snapshot.val();
       const dataArray = Object.keys(loginData).map((key) => ({

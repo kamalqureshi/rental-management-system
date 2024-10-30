@@ -5,6 +5,8 @@ import { ScrollView } from "react-native";
 import { AddButton } from "../components/AddButton";
 import { database } from "../firebaseConfig";
 import { onValue, ref } from "firebase/database";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 export default function AssetView() {
   const assetsRef = ref(database);
@@ -18,13 +20,23 @@ export default function AssetView() {
     });
   }, []);
 
+  const getFilteredList = async(dataArray) => {
+    const emailPromise = await AsyncStorage.getItem('@email').then(email => {
+      return email
+    })
+    setFilteredList(
+      dataArray.filter((data) => {
+        return data.type === "Asset" && data?.userEmail === emailPromise})
+    );
+  }
+
   useEffect(() => {
     if (assetsList) {
       const dataArray = Object.keys(assetsList).map((key) => ({
         id: key,
         ...assetsList[key],
       }));
-      setFilteredList(dataArray.filter((data) => data.type === "Asset"));
+      getFilteredList(dataArray)
     }
   }, [assetsList]);
 

@@ -7,8 +7,11 @@ import {
   primaryWhite,
   shadowGray,
 } from "../constants/colors";
+import { useRoute } from "@react-navigation/native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export function RentalDetailsCard({ data }) {
+
   return (
     <ScrollView contentContainerStyle={styles.scrollViewContent}>
       <View style={styles.container}>

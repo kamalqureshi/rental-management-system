@@ -15,6 +15,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { v4 as uuidv4 } from "uuid";
 import { database } from "../firebaseConfig";
 import { onValue, ref, set, update } from "firebase/database";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const TenantForm = () => {
   const route = useRoute();
@@ -59,6 +60,9 @@ const TenantForm = () => {
 
   const handleSubmit = async () => {
     const tenantId = uuidv4();
+    const emailPromise = await AsyncStorage.getItem('@email').then(email => {
+      return email
+    })
     try {
       id
         ? await update(ref(database, `tenant-${id}`), {
@@ -71,6 +75,7 @@ const TenantForm = () => {
             referenceName: referenceName,
             referenceMobile: referenceMobile,
             referenceAddress: referenceAddress,
+            userEmail: emailPromise
           })
         : await set(ref(database, `tenant-${tenantId}`), {
             id: tenantId,
@@ -84,6 +89,7 @@ const TenantForm = () => {
             referenceMobile: referenceMobile,
             referenceAddress: referenceAddress,
             type: "Tenant",
+            userEmail: emailPromise
           });
 
       const assetToUpdate = filteredList.map(asset => 

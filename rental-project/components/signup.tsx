@@ -5,11 +5,12 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import { database } from "../firebaseConfig";
 import { onValue, ref, set, update } from "firebase/database";
 import { v4 as uuidv4 } from "uuid";
-import { primaryBlue, primaryWhite } from "../constants/colors";
+import { primaryBlue, primaryWhite, primaryRed } from "../constants/colors";
 
 const SignupScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState(false)
   const navigation = useNavigation();
 
   const handleLogin = async () => {
@@ -32,14 +33,31 @@ const SignupScreen = () => {
     navigation.navigate("Login");
   };
 
+  const validate = (text) => {
+    let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
+    if (reg.test(text) === false) {
+      setEmail(text)
+      setError(true)
+    }
+    else {
+      setEmail(text)
+      setError(false)
+    }
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Signup</Text>
+      {error && (
+        <Text style={{ fontSize: 12, color: primaryRed }}>
+          Please enter a valid email
+        </Text>
+      )}
       <TextInput
         style={styles.input}
         placeholder="Email"
         value={email}
-        onChangeText={setEmail}
+        onChangeText={(text) => validate(text)}
         keyboardType="email-address"
         autoCapitalize="none"
       />
@@ -51,7 +69,7 @@ const SignupScreen = () => {
         secureTextEntry
       />
       
-      <TouchableOpacity style={styles.buttonContainer} disabled={!(email && password)} onPress={handleSignUp}>
+      <TouchableOpacity style={styles.buttonContainer} disabled={error && !(email && password)} onPress={handleSignUp}>
         <View style={styles.button}>
           <Text style={styles.buttonText}>
             Signup

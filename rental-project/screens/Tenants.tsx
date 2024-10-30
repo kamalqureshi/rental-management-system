@@ -5,6 +5,8 @@ import { AddButton } from "../components/AddButton";
 import { ScrollView } from "react-native";
 import { database, goOnline } from "../firebaseConfig";
 import { onValue, ref } from "firebase/database";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 export default function TenantView() {
   const rentalsRef = ref(database);
@@ -18,13 +20,23 @@ export default function TenantView() {
     });
   }, []);
 
+  const getFilteredList = async(dataArray) => {
+    const emailPromise = await AsyncStorage.getItem('@email').then(email => {
+      return email
+    })
+    setFilteredList(
+      dataArray.filter((data) => {
+        return data.type === "Tenant" && data?.userEmail === emailPromise})
+    );
+  }
+
   useEffect(() => {
     if (tenantsList) {
       const dataArray = Object.keys(tenantsList).map((key) => ({
         id: key,
         ...tenantsList[key],
       }));
-      setFilteredList(dataArray.filter((data) => data.type === "Tenant"));
+      getFilteredList(dataArray)
     }
   }, [tenantsList]);
 

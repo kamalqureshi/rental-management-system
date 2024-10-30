@@ -4,11 +4,23 @@ import { RentalDetailsCard } from "../components/RentalDetailsCard";
 import { ScrollView } from "react-native-gesture-handler";
 import { database } from "../firebaseConfig";
 import { onValue, ref } from "firebase/database";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const RentalView = () => {
   const rentalsRef = ref(database);
   const [rentalsList, setRentalsList] = useState([]);
   const [filteredList, setFilteredList] = useState([]);
+
+  const getFilteredList = async(dataArray) => {
+    const emailPromise = await AsyncStorage.getItem('@email').then(email => {
+      return email
+    })
+    setFilteredList(
+      dataArray.filter((data) => {
+        return data?.assetStatus === "Rented" && data?.userEmail === emailPromise})
+    );
+  }
 
   useEffect(() => {
     onValue(rentalsRef, (snapshot) => {
@@ -23,11 +35,10 @@ const RentalView = () => {
         id: key,
         ...rentalsList[key],
       }));
-      setFilteredList(
-        dataArray.filter((data) => data?.assetStatus === "Rented")
-      );
+      getFilteredList(dataArray)
     }
   }, [rentalsList]);
+
 
   return (
     <ScrollView>

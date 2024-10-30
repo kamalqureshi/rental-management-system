@@ -18,6 +18,8 @@ import { ref, set, onValue, update } from "firebase/database";
 import DateTimePicker from 'react-native-ui-datepicker';
 import dayjs from 'dayjs';
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 function setDateFormat(date){
   const dateSplit = date.split('/')
@@ -84,6 +86,9 @@ const AssetForm = () => {
     const assetId = uuidv4();
     const tenantId = availableTenantsValue
     const tenant = filteredList?.find(tenant => tenant.id === tenantId)
+    const emailPromise = await AsyncStorage.getItem('@email').then(email => {
+      return email
+    })
     try {
       id
         ? await update(ref(database, `asset-${id}`), {
@@ -102,7 +107,8 @@ const AssetForm = () => {
             tenantLastName: tenant?.lastName || "",
             tenantEmailAddress: tenant?.emailAddress || "",
             tenantMobile: tenant?.mobileNumber || "",
-            tenantAddress: tenant?.tenantAddress || "" 
+            tenantAddress: tenant?.tenantAddress || "",
+            userEmail: emailPromise 
           })
         : await set(ref(database, `asset-${assetId}`), {
             id: assetId,
@@ -123,6 +129,7 @@ const AssetForm = () => {
             tenantMobile: tenant?.mobileNumber || "",
             tenantAddress: tenant?.tenantAddress || "",
             type: "Asset",
+            userEmail: emailPromise 
           });
       console.log("Asset Data written to Firebase");
     } catch (error) {
@@ -197,13 +204,22 @@ const AssetForm = () => {
     }
   }, [tenantsList]);
 
+  const getAvailableTenants = async (filteredList) => {
+    const emailPromise = await AsyncStorage.getItem('@email').then(email => {
+      return email
+    })
+    const tenants = filteredList.map((tenant) => {
+      return tenant.userEmail === emailPromise && 
+      {
+      label: `${tenant?.firstName} ${tenant?.lastName}`,
+      value: tenant?.id
+    }})
+    setAvailableTenantsItems(tenants)
+  }
+
   useEffect(() => {
     if(filteredList) {
-      const tenants = filteredList.map((tenant) => ({
-        label: `${tenant?.firstName} ${tenant?.lastName}`,
-        value: tenant?.id
-      }))
-      setAvailableTenantsItems(tenants)
+      getAvailableTenants(filteredList)
     }
   }, [filteredList])
 
